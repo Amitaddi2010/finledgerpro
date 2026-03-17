@@ -20,7 +20,24 @@ const GSTReturns: React.FC = () => {
     setError(null);
     try {
       const endpoint = tab === 'gstr1' ? '/gst/gstr1-summary' : '/gst/gstr3b-summary';
-      const r = await api.get(endpoint, { params: { financialYear, month } });
+      
+      // The return filed in month M corresponds to invoices from month M-1.
+      // E.g. GST return filed in April covers March invoices.
+      const monthIndex = FY_MONTHS.indexOf(month);
+      let targetMonth = month;
+      let targetFY = financialYear;
+
+      if (monthIndex === 0) {
+        // Return month is 'Apr'. Invoice month is 'Mar' of the previous financial year.
+        targetMonth = 'Mar';
+        const startYear = parseInt(financialYear.split('-')[0]);
+        targetFY = `${startYear - 1}-${startYear.toString().slice(-2)}`;
+      } else {
+        targetMonth = FY_MONTHS[monthIndex - 1];
+        targetFY = financialYear;
+      }
+
+      const r = await api.get(endpoint, { params: { financialYear: targetFY, month: targetMonth } });
       setData(r.data);
     } catch (e: any) {
       setError(e.response?.data?.error || 'Failed to load GST data');
