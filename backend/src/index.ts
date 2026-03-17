@@ -28,10 +28,24 @@ const app = express();
 
 // Middleware
 app.use(cors({ 
-  origin: config.corsOrigin, 
+  origin: function (origin, callback) {
+    // If no origin (e.g. server to server or postman) or parsing fails, let it pass through
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = Array.isArray(config.corsOrigin) ? config.corsOrigin : [config.corsOrigin];
+    const norm = (url: string) => url.trim().replace(/\/$/, '');
+    
+    // Check if incoming origin matches anything in the list
+    if (allowedOrigins.map(norm).includes(norm(origin))) {
+      return callback(null, true);
+    }
+    
+    // Fallback: If development or if explicitly wanting it open temporarily for debugging Render
+    return callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Accept'],
   exposedHeaders: ['set-cookie']
 }));
 app.use(express.json({ limit: '10mb' }));
