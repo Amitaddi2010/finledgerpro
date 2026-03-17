@@ -1,7 +1,13 @@
+/// <reference types="vite/client" />
 import axios from 'axios';
 
+// By default, use the environment variable if defined, otherwise fallback to local dev backend.
+// We strip any trailing '/api/v1' from the user's string just in case they typed it twice.
+const baseUrlFromEnv = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const configuredBaseURL = baseUrlFromEnv.endsWith('/api/v1') ? baseUrlFromEnv : `${baseUrlFromEnv}/api/v1`;
+
 export const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: configuredBaseURL,
   withCredentials: true, // For httpOnly cookies
 });
 
