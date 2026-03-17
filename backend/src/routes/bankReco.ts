@@ -348,10 +348,10 @@ router.post('/match', authMiddleware, rbac('super_admin', 'ca', 'finance_team'),
     const statement = await BankStatement.findOne({ _id: statementId, companyId: req.companyId });
     if (!statement) return res.status(404).json({ error: 'Statement not found' });
 
-    const entry = statement.entries.id(entryId);
+    const entry = statement.entries.find((e: any) => e._id.toString() === entryId);
     if (!entry) return res.status(404).json({ error: 'Entry not found' });
 
-    entry.matchedTransactionId = transactionId;
+    (entry as any).matchedTransactionId = transactionId;
     await statement.save();
     res.json({ message: 'Matched' });
   } catch (e: any) {
@@ -366,10 +366,10 @@ router.post('/unmatch', authMiddleware, rbac('super_admin', 'ca', 'finance_team'
     const statement = await BankStatement.findOne({ _id: statementId, companyId: req.companyId });
     if (!statement) return res.status(404).json({ error: 'Statement not found' });
 
-    const entry = statement.entries.id(entryId);
+    const entry = statement.entries.find((e: any) => e._id.toString() === entryId);
     if (!entry) return res.status(404).json({ error: 'Entry not found' });
 
-    entry.matchedTransactionId = undefined;
+    (entry as any).matchedTransactionId = undefined;
     await statement.save();
     res.json({ message: 'Unmatched' });
   } catch (e: any) {
