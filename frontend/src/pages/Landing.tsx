@@ -13,7 +13,10 @@ import {
   Lock,
   Zap,
   MousePointerClick,
-  Monitor
+  Monitor,
+  Users,
+  BookOpen,
+  Brain
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -555,50 +558,83 @@ const Landing: React.FC = () => {
       {/* Testimonials */}
       <Testimonials />
 
-      {/* The Vision Section */}
-      <section id="vision" className="py-40 px-6 relative overflow-hidden bg-black flex justify-center items-center">
-         <div className="w-full max-w-6xl mx-auto">
+      {/* About the Founder Section */}
+      <section id="about" className="py-32 px-6 relative overflow-hidden bg-[#0A0A0A] border-t border-white/5 flex justify-center items-center">
+         <div className="w-full max-w-7xl mx-auto">
             <FadeInView>
-               <div className="group relative w-full">
-                  {/* Glowing background */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-[#4F4FF1] via-purple-500 to-[#00FFFF] rounded-[40px] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000" />
+               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
                   
-                  {/* Interactive Card */}
-                  <div className="relative glass border border-white/10 rounded-[40px] p-12 md:p-24 overflow-hidden shadow-2xl transition-transform duration-1000 group-hover:scale-[1.01] bg-black/60 relative flex flex-col items-center">
+                  {/* Left Side: Text Content */}
+                  <div>
+                     <h3 className="text-[#4F4FF1] font-bold text-xs md:text-sm tracking-[0.2em] uppercase mb-6">About the Founder</h3>
+                     <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-10 leading-[1.1]">
+                        The Idea Behind <br/>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-[#4F4FF1]">FinLedger Pro</span>
+                     </h2>
                      
-                     {/* Background Icon */}
-                     <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity duration-1000 pointer-events-none">
-                        <Globe className="w-[600px] h-[600px] text-white" />
+                     <div className="space-y-6 text-white/70 text-base md:text-lg leading-[1.8] font-medium">
+                        <p>
+                           <strong className="text-white font-bold">CA Aarushi Gupta</strong> envisioned FinLedger Pro while managing the financial
+                           complexities of growing CA practices. Having spent years navigating
+                           fragmented spreadsheets, manual reconciliation, and disconnected
+                           compliance tools, she saw the need for a unified, intelligent platform that could
+                           serve the modern Chartered Accountant.
+                        </p>
+                        <p>
+                           Her vision was clear: <em className="text-white not-italic font-bold">build a tool that speaks the language of Indian finance</em> — one
+                           that understands GST compliance cycles, Indian GAAP requirements, financial
+                           year conventions (April–March), and the unique multi-entity structures that
+                           CA firms operate under.
+                        </p>
+                        <p>
+                           FinLedger Pro is the result of that vision — a platform where AI doesn't replace
+                           the CA, but amplifies their expertise. From automated anomaly detection to
+                           natural-language financial queries, every feature is designed to give CAs back
+                           the time they spend on repetitive analysis, so they can focus on strategic
+                           advisory.
+                        </p>
+                     </div>
+                  </div>
+
+                  {/* Right Side: Card */}
+                  <div className="glass-card rounded-[32px] p-8 md:p-12 relative overflow-hidden flex flex-col items-start border-white/5 bg-[#101014]/60 shadow-2xl">
+                     <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 opacity-[0.03] pointer-events-none">
+                        <Globe className="w-64 h-64 text-white" />
                      </div>
                      
-                     <div className="relative z-10 flex flex-col items-center text-center space-y-12">
-                        <div className="inline-block px-8 py-3 rounded-full glass border border-white/10 uppercase tracking-[0.4em] text-[#4F4FF1] text-xs font-black">
-                           The Vision
+                     <div className="flex items-center gap-5 md:gap-6 mb-12 relative z-10 w-full">
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-blue-400 to-[#4F4FF1] flex items-center justify-center shadow-[0_0_30px_rgba(79,79,241,0.3)] shrink-0">
+                           <span className="text-2xl md:text-3xl font-black text-white tracking-tighter">AG</span>
                         </div>
-                        
-                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] italic text-white/90">
-                           Bridging the gap between <br />
-                           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4F4FF1] via-purple-500 to-[#00FFFF]">Data & Strategy.</span>
-                        </h2>
-                        
-                        <p className="max-w-4xl mx-auto text-xl md:text-3xl text-white/50 font-medium leading-relaxed italic">
-                           "Financial intelligence isn't just about reading reports—it's about foreseeing the future of your enterprise through the lens of precision and AI-driven insights."
+                        <div>
+                           <h3 className="text-xl md:text-2xl font-bold text-white mb-2 tracking-tight">CA Aarushi Gupta</h3>
+                           <p className="text-[#4F4FF1]/90 font-bold tracking-[0.2em] text-[10px] md:text-xs uppercase">Founder & Visionary</p>
+                        </div>
+                     </div>
+                     
+                     <div className="relative z-10 w-full mb-12">
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#4F4FF1] to-blue-400 rounded-full" />
+                        <p className="text-lg md:text-xl text-white/90 italic font-medium leading-relaxed pl-6 py-1">
+                           "Every CA firm deserves an AI co-pilot that understands Indian finance as well as they do. FinLedger Pro is that co-pilot."
                         </p>
+                     </div>
 
-                        <div className="pt-8 flex flex-col items-center justify-center gap-2">
-                           <div className="text-2xl font-black uppercase tracking-widest text-white">CA Aarushi Gupta</div>
-                           <div className="text-[#4F4FF1] font-bold uppercase tracking-[0.3em] text-xs">Founder & Visionary</div>
+                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 w-full relative z-10">
+                        <div className="px-3 py-5 md:p-6 glass rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors group">
+                           <Users className="w-5 h-5 md:w-6 md:h-6 text-[#4F4FF1] mb-3 group-hover:scale-110 transition-transform" />
+                           <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white/50 leading-tight">Serving CAs<br/>Nationwide</span>
                         </div>
-
-                        <div className="pt-12 flex flex-wrap justify-center gap-4 max-w-4xl">
-                           {['Data Integrity', 'Strategic Foresight', 'AI Governance', 'Financial Precision', 'Scale Velocity'].map((tag) => (
-                              <span key={tag} className="px-6 py-3 glass border border-white/10 rounded-full text-xs font-black uppercase tracking-widest text-white/40 hover:text-white hover:border-[#4F4FF1]/50 hover:bg-[#4F4FF1]/10 hover:shadow-[0_0_30px_rgba(79,79,241,0.2)] transition-all cursor-default">
-                                 {tag}
-                              </span>
-                           ))}
+                        <div className="px-3 py-5 md:p-6 glass rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors group">
+                           <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-[#4F4FF1] mb-3 group-hover:scale-110 transition-transform" />
+                           <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white/50 leading-tight">ICAI Best<br/>Practices</span>
+                        </div>
+                        <div className="px-3 py-5 md:p-6 glass rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center hover:bg-white/5 transition-colors group col-span-2 sm:col-span-1">
+                           <Brain className="w-5 h-5 md:w-6 md:h-6 text-[#4F4FF1] mb-3 group-hover:scale-110 transition-transform" />
+                           <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white/50 leading-tight">AI-Driven<br/>Analytics</span>
                         </div>
                      </div>
                   </div>
+
                </div>
             </FadeInView>
          </div>
