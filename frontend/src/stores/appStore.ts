@@ -21,13 +21,16 @@ const getInitialFY = () => {
 interface AppState {
   financialYear: string;
   isDarkMode: boolean;
+  isChatOpen: boolean;
   setFinancialYear: (fy: string) => void;
   toggleDarkMode: () => void;
+  setChatOpen: (open: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
   financialYear: getInitialFY(),
   isDarkMode: document.documentElement.classList.contains('dark'),
+  isChatOpen: false,
   setFinancialYear: (financialYear) =>
     set(() => {
       try {
@@ -48,4 +51,5 @@ export const useAppStore = create<AppState>((set) => ({
     }
     return { isDarkMode: isDark };
   }),
+  setChatOpen: (isChatOpen) => set({ isChatOpen }),
 }));

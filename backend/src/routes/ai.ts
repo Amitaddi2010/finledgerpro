@@ -1,6 +1,8 @@
 import { Router, Response } from 'express';
+import mongoose from 'mongoose';
 import { authMiddleware, AuthRequest, rbac } from '../middleware/auth';
 import { aiChatLimiter, aiInsightsLimiter, aiQueryLimiter, aiBudgetLimiter } from '../middleware/aiRateLimit';
+import { FY_MONTHS, getMonthsElapsed, getCurrentFY } from '../lib/formatINR';
 import { getGroqClient, GROQ_MODEL } from '../lib/groq';
 import { buildFinancialContext } from '../lib/financialContext';
 import { AIInsight, AITokenUsage } from '../models/AIModels';
@@ -12,7 +14,8 @@ const router = Router();
 // AI Chat (SSE streaming)
 router.post('/chat', authMiddleware, aiChatLimiter, async (req: AuthRequest, res: Response) => {
   try {
-    const { messages, financialYear } = req.body;
+    const messages = req.body.messages;
+    const financialYear = req.body.financialYear || getCurrentFY();
 
     if (!config.groqApiKey) {
       return res.status(503).json({ error: 'AI service not configured. Please set GROQ_API_KEY.' });
@@ -81,7 +84,7 @@ ${context}`,
 // Generate Insights
 router.post('/generate-insights', authMiddleware, aiInsightsLimiter, async (req: AuthRequest, res: Response) => {
   try {
-    const { financialYear } = req.body;
+    const financialYear = req.body.financialYear || getCurrentFY();
 
     if (!config.groqApiKey) {
       return res.status(503).json({ error: 'AI service not configured. Please set GROQ_API_KEY.' });
@@ -244,6 +247,7 @@ Return format:
 router.post('/budget-recommendations', authMiddleware, aiBudgetLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const { financialYear } = req.body;
+    const companyId = new mongoose.Types.ObjectId(req.companyId);
 
     if (!config.groqApiKey) {
       return res.status(503).json({ error: 'AI service not configured. Please set GROQ_API_KEY.' });
@@ -255,7 +259,7 @@ router.post('/budget-recommendations', authMiddleware, aiBudgetLimiter, async (r
 
     // Get 24-month spend history
     const spendHistory = await ExpenseTransaction.aggregate([
-      { $match: { companyId: req.companyId } },
+      { $match: { companyId } },
       { $group: { _id: { fy: '$financialYear', month: '$month', category: '$category' }, total: { $sum: '$amount' } } },
       { $sort: { '_id.fy': 1, '_id.month': 1 } },
     ]);

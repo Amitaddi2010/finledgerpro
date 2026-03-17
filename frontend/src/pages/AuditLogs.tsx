@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
+import { exportToCsv } from '@/lib/csvExport';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -50,7 +51,23 @@ const AuditLogs: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-           <Button variant="outline" className="gap-2 font-bold uppercase text-[10px] tracking-widest h-10">
+           <Button 
+             variant="outline" 
+             className="gap-2 font-bold uppercase text-[10px] tracking-widest h-10"
+             onClick={() => {
+               if (!logs.length) return;
+               const headers = ['Timestamp', 'User', 'Action', 'Module', 'Entity ID', 'IP Address'];
+               const rows = logs.map(log => [
+                 format(new Date(log.createdAt || log.timestamp), 'yyyy-MM-dd HH:mm:ss'),
+                 log.userId?.name || 'System',
+                 log.action,
+                 log.entity,
+                 log.entityId,
+                 log.ipAddress || '-'
+               ]);
+               exportToCsv('Audit-Trail.csv', headers, rows);
+             }}
+           >
               <Download className="w-4 h-4" /> Export Audit Trail
            </Button>
            <Button className="gap-2 font-black uppercase text-[10px] tracking-widest h-10 shadow-lg shadow-primary/20">

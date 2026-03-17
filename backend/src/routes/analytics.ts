@@ -1,4 +1,5 @@
 import { Router, Response } from 'express';
+import mongoose from 'mongoose';
 import { IncomeTransaction, ExpenseTransaction, BalanceSheetEntry, Budget } from '../models';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { FY_MONTHS } from '../lib/formatINR';
@@ -10,7 +11,7 @@ router.get('/charts/:chartType', authMiddleware, async (req: AuthRequest, res: R
   try {
     const { chartType } = req.params;
     const { financialYear, branch, costCentre } = req.query;
-    const companyId = req.companyId;
+    const companyId = new mongoose.Types.ObjectId(req.companyId);
 
     const filter: any = { companyId };
     if (financialYear) filter.financialYear = financialYear;

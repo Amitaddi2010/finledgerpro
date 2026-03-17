@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Upload, CheckCircle2, AlertTriangle, Download, X } from 'lucide-react';
+import { Upload, CheckCircle2, AlertTriangle, Download, X, Trash2, Sparkles, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useAppStore } from '@/stores/appStore';
 import { Button } from '@/components/ui/button';
@@ -35,9 +35,11 @@ const BankReconciliation: React.FC = () => {
   const [txnSearch, setTxnSearch] = useState('');
   const [txnResults, setTxnResults] = useState<any[]>([]);
   const [matchSaving, setMatchSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const loadStatements = async (selectId?: string, fy?: string) => {
     const useFY = fy ?? financialYear;
+    setIsLoading(true);
     try {
       const r = await api.get('/bank-reco/statements', { params: { financialYear: useFY } });
       const list: Statement[] = r.data.statements || [];
@@ -52,6 +54,8 @@ const BankReconciliation: React.FC = () => {
     } catch {
       setStatements([]);
       setActiveStatement(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,7 +71,7 @@ const BankReconciliation: React.FC = () => {
       const fd = new FormData();
       fd.append('file', file);
       fd.append('financialYear', financialYear);
-      const r = await api.post('/bank-reco/import', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const r = await api.post('/bank-reco/import', fd);
       await loadStatements(r.data.statementId);
     } catch (err: any) {
       setUploadError(err.response?.data?.error || 'Upload failed');
@@ -139,6 +143,16 @@ const BankReconciliation: React.FC = () => {
     a.click();
   };
 
+  const handleDelete = async () => {
+    if (!activeStatement || !window.confirm('Are you sure you want to delete this statement?')) return;
+    try {
+      await api.delete(`/bank-reco/statements/${activeStatement._id}`);
+      await loadStatements();
+    } catch (err: any) {
+      setUploadError(err.response?.data?.error || 'Delete failed');
+    }
+  };
+
   const entries = activeStatement?.entries || [];
   const matched = entries.filter(e => e.matchedTransactionId).length;
   const unmatched = entries.length - matched;
@@ -152,15 +166,22 @@ const BankReconciliation: React.FC = () => {
         </div>
         <div className="flex gap-2">
           {activeStatement && (
-            <Button variant="outline" size="sm" onClick={exportCsv} className="gap-2">
-              <Download className="w-4 h-4" /> Export
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={exportCsv} className="gap-2">
+                <Download className="w-4 h-4" /> Export
+              </Button>
+              {canWrite && (
+                <Button variant="outline" size="sm" onClick={handleDelete} className="gap-2 text-destructive hover:bg-destructive/10">
+                  <Trash2 className="w-4 h-4" /> Delete
+                </Button>
+              )}
+            </div>
           )}
           {canWrite && (
             <>
-              <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleUpload} />
+              <input ref={fileRef} type="file" accept=".csv,.pdf" className="hidden" onChange={handleUpload} />
               <Button size="sm" onClick={() => fileRef.current?.click()} disabled={uploading} className="gap-2">
-                <Upload className="w-4 h-4" /> {uploading ? 'Uploading…' : 'Import CSV'}
+                <Upload className="w-4 h-4" /> {uploading ? 'Processing…' : 'Import Statement'}
               </Button>
             </>
           )}
@@ -172,17 +193,22 @@ const BankReconciliation: React.FC = () => {
       )}
 
       {/* Statement selector */}
-      {statements.length > 1 && (
+      {statements.length > 1 && !isLoading && (
         <div className="flex gap-2 flex-wrap">
           {statements.map(s => (
             <button
               key={s._id}
               onClick={async () => {
-                const fresh = await api.get(`/bank-reco/statements/${s._id}`);
-                setActiveStatement(fresh.data.statement);
+                setIsLoading(true);
+                try {
+                  const fresh = await api.get(`/bank-reco/statements/${s._id}`);
+                  setActiveStatement(fresh.data.statement);
+                } finally {
+                  setIsLoading(false);
+                }
               }}
               className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${
-                activeStatement?._id === s._id ? 'bg-accent text-white' : 'bg-muted text-muted-foreground'
+                activeStatement?._id === s._id ? 'bg-accent text-white' : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
               {s.accountName} — {s.statementDate.slice(0, 10)}
@@ -191,9 +217,16 @@ const BankReconciliation: React.FC = () => {
         </div>
       )}
 
+      {isLoading && (
+        <div className="flex flex-col items-center justify-center p-12 text-muted-foreground animate-pulse">
+          <Loader2 className="w-8 h-8 animate-spin mb-4 text-accent" />
+          <p className="text-sm font-medium">Loading bank records...</p>
+        </div>
+      )}
+
       {/* Summary cards */}
-      {activeStatement && (
-        <div className="grid grid-cols-3 gap-4">
+      {activeStatement && !isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-card border p-5 rounded-2xl shadow-sm">
             <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Total Entries</div>
             <div className="text-3xl font-black">{entries.length}</div>
@@ -206,17 +239,44 @@ const BankReconciliation: React.FC = () => {
             <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Unmatched</div>
             <div className="text-3xl font-black text-warning">{unmatched}</div>
           </div>
+          <div className="flex items-center justify-center">
+            {canWrite && unmatched > 0 && (
+              <Button
+                onClick={async () => {
+                  setUploading(true);
+                  try {
+                    const r = await api.post(`/bank-reco/auto-match/${activeStatement._id}`);
+                    alert(r.data.message);
+                    await loadStatements(activeStatement._id);
+                  } catch (err: any) {
+                    setUploadError(err.response?.data?.error || 'Auto-match failed');
+                  } finally {
+                    setUploading(false);
+                  }
+                }}
+                disabled={uploading}
+                className="w-full h-full rounded-2xl bg-accent text-white font-black text-sm gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-accent/20 py-6"
+              >
+                <div className="flex flex-col items-center">
+                  <span className="flex items-center gap-2">✨ Magic Reconcile</span>
+                  <span className="text-[10px] opacity-80 font-medium">AI Auto-Match</span>
+                </div>
+              </Button>
+            )}
+          </div>
         </div>
       )}
 
       {/* Entries table */}
-      {!activeStatement ? (
+      {!activeStatement && !isLoading && (
         <div className="bg-card border rounded-2xl p-12 text-center text-muted-foreground">
           <Upload className="w-10 h-10 mx-auto mb-3 opacity-30" />
           <p className="font-medium">Import a bank statement CSV to get started.</p>
           <p className="text-xs mt-1">Expected columns: date, description, debit, credit, balance</p>
         </div>
-      ) : (
+      )}
+      
+      {activeStatement && !isLoading && (
         <div className="bg-card border rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">

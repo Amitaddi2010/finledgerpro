@@ -22,11 +22,12 @@ import {
 import { useAppStore } from '@/stores/appStore';
 import { api } from '@/lib/api';
 import { formatINRCurrency, toLakhsCrores } from '@/lib/formatINR';
+import { exportToCsv } from '@/lib/csvExport';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 const Dashboard: React.FC = () => {
-  const { financialYear } = useAppStore();
+  const { financialYear, setChatOpen } = useAppStore();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -131,6 +132,18 @@ const Dashboard: React.FC = () => {
     },
   ];
 
+  const downloadSummary = () => {
+    if (!data) return;
+    const headers = ['Metric', 'Current Value', 'Previous Value', 'Growth %'];
+    const rows = [
+      ['Revenue', revenue, data.yoy?.summary?.revenue?.previous || 0, yoyRevenuePct],
+      ['Net Profit', netProfit, data.yoy?.summary?.netProfit?.previous || 0, yoyProfitPct],
+      ['Net Margin', `${netMargin.toFixed(1)}%`, '-', yoyNetMarginPct],
+      ['Current Ratio', ratioCurrent, ratioPrev, ratioDelta]
+    ];
+    exportToCsv(`Dashboard-Summary-${financialYear}.csv`, headers, rows);
+  };
+
   return (
     <div className="space-y-12 pb-20">
       <motion.div
@@ -143,8 +156,16 @@ const Dashboard: React.FC = () => {
             <p className="text-white/40 font-mono font-black uppercase tracking-[0.3em] text-[10px] mt-2">Intelligence Overview • FY {financialYear}</p>
          </div>
          <div className="flex gap-4">
-            <button className="px-6 py-3 glass border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">Download Report</button>
-            <button className="px-6 py-3 bg-[#4F4FF1] rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#3F3FE1] transition-all flex items-center gap-2">
+            <button 
+              onClick={downloadSummary}
+              className="px-6 py-3 glass border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all"
+            >
+              Download Report
+            </button>
+            <button 
+              onClick={() => setChatOpen(true)}
+              className="px-6 py-3 bg-[#4F4FF1] rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#3F3FE1] transition-all flex items-center gap-2"
+            >
                <Sparkles className="w-4 h-4" /> Ask AI
             </button>
          </div>

@@ -1,10 +1,14 @@
 import { Router, Response } from 'express';
+import mongoose from 'mongoose';
 import { Budget } from '../models/Budget';
 import { ExpenseTransaction } from '../models/ExpenseTransaction';
 import { authMiddleware, AuthRequest, rbac } from '../middleware/auth';
 import { getMonthsElapsed } from '../lib/formatINR';
 
 const router = Router();
+
+// ... existing GET all budgets, POST create budget, PUT update budget ...
+// I will just replace the top and the specific line in utilization to be safe
 
 // GET all budgets
 router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
@@ -50,7 +54,7 @@ router.put('/:id', authMiddleware, rbac('super_admin', 'ca'), async (req: AuthRe
 router.get('/utilisation', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { financialYear } = req.query;
-    const companyId = req.companyId;
+    const companyId = new mongoose.Types.ObjectId(req.companyId);
     const monthsElapsed = getMonthsElapsed(financialYear as string);
 
     const [budgets, expenses] = await Promise.all([

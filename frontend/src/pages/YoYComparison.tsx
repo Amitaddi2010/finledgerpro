@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   Sparkles,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
+  Download
 } from 'lucide-react';
 import { 
   XAxis, 
@@ -17,6 +18,8 @@ import {
 import { useAppStore } from '@/stores/appStore';
 import { api } from '@/lib/api';
 import { formatINR, toLakhsCrores } from '@/lib/formatINR';
+import { exportToCsv } from '@/lib/csvExport';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const YoYComparison: React.FC = () => {
@@ -111,8 +114,21 @@ const YoYComparison: React.FC = () => {
               </h2>
               <p className="text-muted-foreground text-sm font-medium">Comparing Actuals vs Previous Year vs Prorated Targets</p>
             </div>
-            <div className="flex gap-4">
-               <div className="flex items-center gap-2 text-xs font-bold">
+            <div className="flex gap-4 items-center">
+               <Button 
+                 variant="outline" 
+                 size="sm" 
+                 className="gap-2"
+                 onClick={() => {
+                   if (!data?.comparison) return;
+                   const headers = ['Month', 'Current Revenue', 'Previous Revenue', 'Target Revenue', 'YoY Growth %', 'Target Variance %'];
+                   const rows = data.comparison.map((r: any) => [r.month, r.currentRevenue, r.previousRevenue, r.targetRevenue, r.yoyGrowth, r.targetVariance]);
+                   exportToCsv(`YoY-Comparison-${financialYear}.csv`, headers, rows);
+                 }}
+               >
+                 <Download className="w-4 h-4" /> Download Report
+               </Button>
+               <div className="flex items-center gap-2 text-xs font-bold ml-2">
                  <div className="w-3 h-[2px] bg-accent" /> Current
                </div>
                <div className="flex items-center gap-2 text-xs font-bold opacity-40">

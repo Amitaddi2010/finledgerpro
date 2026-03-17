@@ -1,8 +1,39 @@
 # FinLedger Pro
 
-FinLedger Pro is a full-stack web app:
-- **frontend**: React + Vite + Tailwind
-- **backend**: Node/Express + MongoDB
+FinLedger Pro is a premium enterprise-grade AI financial intelligence platform built with **React (Vite), Node.js (Express), and MongoDB**.
+
+---
+
+## ✨ Key Features
+
+### 🧠 Advanced AI Financial Intelligence
+*   **Global AI Chat Assistant**: Persistent, context-aware financial consultation powered by advanced neural models.
+*   **Neural Insights Engine**: Automated executive summaries, actionable performance recommendations, and growth analysis.
+*   **Health Scoring & Anomalies**: Real-time 0-100 firm health metrics and automatic spike detection for all expense categories.
+*   **Natural Language Query (NLQ)**: Slicing and dicing complex data using human-language questions.
+
+### 📊 Interactive Analytics & Visualization
+*   **Executive Command Center**: High-fidelity dashboards with real-time KPI tracking (Revenue, Net Profit, Net Margin, and Ratios).
+*   **YoY Comparison Engine**: Trend overlays comparing current performance with historical actuals and prorated targets.
+*   **Financial Ratios Hub Hub**: Comprehensive visualization of liquidity, profitability, solvency, and efficiency ratios.
+*   **Dynamic Pivot Tables**: Flexible, multi-dimensional filtering for deep-dive transactional analysis.
+
+### 💾 Data Portability & Reporting
+*   **Universal CSV Export**: One-click, high-fidelity exports for P&L Statements, Dashboards, Audit Trails, and AI Insights.
+*   **GST & Compliance**: Automated tracking of GST Invoices, Returns, and Bank Reconciliations.
+
+### 🛡️ Enterprise Security & Infrastructure
+*   **Multi-Entity Management**: Secure multi-company switching with strictly scoped data isolation.
+*   **Security Audit Central**: Verifiable audit logging for every system modification and security event.
+*   **JWT Architecture**: Production-ready security with httpOnly cookie-based refresh tokens.
+
+---
+
+## 🏗️ Project Architecture
+*   **frontend**: React + Vite + Tailwind CSS (Premium Typography: General Sans & Be Vietnam Pro)
+*   **backend**: Node/Express + MongoDB (Mongoose)
+
+---
 
 ## Multi-company (company-wise data)
 

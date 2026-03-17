@@ -1,8 +1,10 @@
+import mongoose from 'mongoose';
 import { IncomeTransaction, ExpenseTransaction, Budget, BalanceSheetEntry, FinancialTarget } from '../models';
 import { formatINR, FY_MONTHS, getMonthsElapsed } from './formatINR';
 
-export async function buildFinancialContext(companyId: string, financialYear: string): Promise<string> {
+export async function buildFinancialContext(companyIdStr: string, financialYear: string): Promise<string> {
   const monthsElapsed = getMonthsElapsed(financialYear);
+  const companyId = new mongoose.Types.ObjectId(companyIdStr);
 
   const [incomeByMonth, expenseByMonth, expenseByCategory, budgets, bsLatest, targets] = await Promise.all([
     IncomeTransaction.aggregate([

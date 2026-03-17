@@ -20,7 +20,7 @@ interface Message {
 }
 
 const AIChatAssistant: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isChatOpen, setChatOpen } = useAppStore();
   const [isMinimized, setIsMinimized] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
@@ -78,31 +78,35 @@ const AIChatAssistant: React.FC = () => {
 
       setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n\n');
-          
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const content = line.replace('data: ', '');
-              if (content === '[DONE]') continue;
+      if (!reader) throw new Error("No reader");
 
-              try {
-                const parsed = JSON.parse(content);
-                assistantMsg += parsed.delta || '';
-              } catch {
-                assistantMsg += content;
-              }
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || !trimmed.startsWith('data: ')) continue;
+
+          const jsonStr = trimmed.replace('data: ', '');
+          if (jsonStr === '[DONE]') break;
+
+          try {
+            const data = JSON.parse(jsonStr);
+            if (data.delta) {
+              assistantMsg += data.delta;
+
               setMessages(prev => {
                 const newMsgs = [...prev];
                 newMsgs[newMsgs.length - 1].content = assistantMsg;
                 return newMsgs;
               });
             }
+          } catch (e) {
+            console.warn("Parse error in stream", e);
           }
         }
       }
@@ -114,10 +118,10 @@ const AIChatAssistant: React.FC = () => {
     }
   };
 
-  if (!isOpen) {
+  if (!isChatOpen) {
     return (
       <button 
-        onClick={() => setIsOpen(true)}
+        onClick={() => setChatOpen(true)}
         className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 z-50 group"
       >
         <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full border-2 border-white animate-bounce" />
@@ -150,7 +154,7 @@ const AIChatAssistant: React.FC = () => {
             {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
           </button>
           <button 
-            onClick={() => setIsOpen(false)}
+            onClick={() => setChatOpen(false)}
             className="p-1 hover:bg-white/20 rounded transition-colors"
           >
             <X className="w-4 h-4" />
@@ -176,7 +180,7 @@ const AIChatAssistant: React.FC = () => {
                   "p-3 rounded-2xl text-sm leading-relaxed",
                   msg.role === 'user' 
                     ? "bg-accent text-white rounded-tr-none font-medium" 
-                    : "bg-white border rounded-tl-none text-slate-700 shadow-sm"
+                    : "bg-muted border rounded-tl-none text-foreground shadow-sm"
                 )}>
                   {msg.content || (isTyping && i === messages.length - 1 ? <div className="flex gap-1 py-1"><div className="w-1 h-1 bg-slate-300 rounded-full animate-bounce" /><div className="w-1 h-1 bg-slate-300 rounded-full animate-bounce [animation-delay:0.2s]" /><div className="w-1 h-1 bg-slate-300 rounded-full animate-bounce [animation-delay:0.4s]" /></div> : null)}
                 </div>
@@ -185,14 +189,14 @@ const AIChatAssistant: React.FC = () => {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 border-t bg-white">
+          <div className="p-4 border-t bg-card">
             <div className="relative">
               <input 
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask me about FY24 transactions..."
-                className="w-full pl-4 pr-12 py-3 bg-slate-100 border-none rounded-xl text-sm focus:ring-2 focus:ring-accent transition-all font-medium"
+                className="w-full pl-4 pr-12 py-3 bg-muted/50 border-none rounded-xl text-sm focus:ring-2 focus:ring-accent transition-all font-medium text-foreground placeholder:text-muted-foreground"
               />
               <button 
                 onClick={handleSend}

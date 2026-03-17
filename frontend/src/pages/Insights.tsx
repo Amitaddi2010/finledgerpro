@@ -160,12 +160,12 @@ const Insights: React.FC = () => {
                          <TrendingUp className="w-5 h-5" />}
                       </div>
                       <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        {insight.category}
+                        {insight.metric}
                       </div>
                    </div>
                    <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">{insight.title}</h4>
                    <p className="text-sm text-muted-foreground leading-relaxed">
-                     {insight.description}
+                     {insight.detail}
                    </p>
                 </div>
               ))}

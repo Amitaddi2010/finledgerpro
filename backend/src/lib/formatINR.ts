@@ -31,6 +31,10 @@ export function getCurrentFY(): string {
 }
 
 export function getMonthsElapsed(financialYear: string): number {
+  if (!financialYear || !financialYear.includes('-')) {
+    const now = new Date();
+    return now.getMonth() >= 3 ? now.getMonth() - 2 : now.getMonth() + 10;
+  }
   const startYear = parseInt(financialYear.split('-')[0]);
   const fyStart = new Date(startYear, 3, 1); // April 1
   const now = new Date();

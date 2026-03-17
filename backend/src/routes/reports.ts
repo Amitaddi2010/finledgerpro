@@ -1,4 +1,5 @@
 import { Router, Response } from 'express';
+import mongoose from 'mongoose';
 import { IncomeTransaction, ExpenseTransaction, BalanceSheetEntry, FinancialTarget } from '../models';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { computeRatios } from '../lib/ratioCalculator';
@@ -10,7 +11,7 @@ const router = Router();
 router.get('/pl-statement', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { financialYear } = req.query;
-    const companyId = req.companyId;
+    const companyId = new mongoose.Types.ObjectId(req.companyId);
 
     const [incomeByMonthCat, expenseByMonthCat] = await Promise.all([
       IncomeTransaction.aggregate([
@@ -103,7 +104,7 @@ router.get('/pl-statement', authMiddleware, async (req: AuthRequest, res: Respon
 router.get('/yoy-comparison', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { financialYear } = req.query;
-    const companyId = req.companyId;
+    const companyId = new mongoose.Types.ObjectId(req.companyId);
     const currentFY = financialYear as string;
     const prevYear = parseInt(currentFY.split('-')[0]) - 1;
     const prevFY = `${prevYear}-${(prevYear + 1).toString().slice(-2)}`;
@@ -237,7 +238,7 @@ router.get('/yoy-comparison', authMiddleware, async (req: AuthRequest, res: Resp
 router.get('/ratios', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { financialYear } = req.query;
-    const companyId = req.companyId;
+    const companyId = new mongoose.Types.ObjectId(req.companyId);
 
     const [currentBS, previousEntries] = await Promise.all([
       BalanceSheetEntry.findOne({ companyId, financialYear }).sort({ date: -1 }),

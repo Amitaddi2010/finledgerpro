@@ -7,10 +7,13 @@ import {
   TrendingUp, 
   AlertCircle,
   ArrowUpRight,
-  Info
+  Info,
+  Download
 } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
 import { api } from '@/lib/api';
+import { exportToCsv } from '@/lib/csvExport';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { 
   ResponsiveContainer, 
@@ -81,8 +84,22 @@ const FinancialRatios: React.FC = () => {
           </h2>
           <p className="text-muted-foreground text-sm font-medium">Real-time health pulse for FY {financialYear}</p>
         </div>
-        <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-positive/10 text-positive rounded-full text-xs font-black uppercase tracking-widest border border-positive/20">
-          <Activity className="w-4 h-4" /> Healthy Outlook
+        <div className="hidden sm:flex items-center gap-3">
+          <Button 
+            variant="outline"
+            className="gap-2"
+            onClick={() => {
+              if (!data?.ratios) return;
+              const headers = ['Ratio Name', 'Value'];
+              const rows = Object.entries(data.ratios).map(([k, v]: [string, any]) => [k.replace(/([A-Z])/g, ' $1').trim(), v]);
+              exportToCsv(`Financial-Ratios-${financialYear}.csv`, headers, rows);
+            }}
+          >
+            <Download className="w-4 h-4" /> Download Report
+          </Button>
+          <div className="flex items-center gap-2 px-4 py-2 bg-positive/10 text-positive rounded-full text-xs font-black uppercase tracking-widest border border-positive/20">
+            <Activity className="w-4 h-4" /> Healthy Outlook
+          </div>
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import { Router, Response } from 'express';
+import mongoose from 'mongoose';
 import { IncomeTransaction, ExpenseTransaction } from '../models';
 import { authMiddleware, AuthRequest, rbac } from '../middleware/auth';
 
@@ -202,7 +203,8 @@ router.delete('/expense/:id', authMiddleware, rbac('super_admin', 'ca'), async (
 router.get('/income/summary', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { financialYear } = req.query;
-    const filter: any = { companyId: req.companyId };
+    const companyId = new mongoose.Types.ObjectId(req.companyId);
+    const filter: any = { companyId };
     if (financialYear) filter.financialYear = financialYear;
 
     const [byMonth, byCategory, total] = await Promise.all([
@@ -232,7 +234,8 @@ router.get('/income/summary', authMiddleware, async (req: AuthRequest, res: Resp
 router.get('/expense/summary', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { financialYear } = req.query;
-    const filter: any = { companyId: req.companyId };
+    const companyId = new mongoose.Types.ObjectId(req.companyId);
+    const filter: any = { companyId };
     if (financialYear) filter.financialYear = financialYear;
 
     const [byMonth, byCategory, total] = await Promise.all([

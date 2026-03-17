@@ -1,4 +1,5 @@
 import { Router, Response } from 'express';
+import mongoose from 'mongoose';
 import { IncomeTransaction, ExpenseTransaction } from '../models';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { FY_MONTHS } from '../lib/formatINR';
@@ -8,7 +9,7 @@ const router = Router();
 router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { rows = 'category', cols = 'month', financialYear, transactionType = 'both', months, categories, branches, costCentres, aggregation = 'sum' } = req.query;
-    const companyId = req.companyId;
+    const companyId = new mongoose.Types.ObjectId(req.companyId);
 
     const matchFilter: any = { companyId };
     if (financialYear) matchFilter.financialYear = financialYear;

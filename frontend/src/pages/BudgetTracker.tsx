@@ -177,8 +177,8 @@ const BudgetTracker: React.FC = () => {
                    <XAxis dataKey="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700 }} />
                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10 }} tickFormatter={(v) => `₹${v/100000}L`} />
                    <Tooltip formatter={(v: any) => formatINRCurrency(v)} cursor={{ fill: '#f8fafc' }} />
-                   <Bar dataKey="budgeted" name="Budget" fill="#cbd5e1" radius={[4, 4, 0, 0]} barSize={32} />
-                   <Bar dataKey="actuals" name="Actuals" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={32}>
+                   <Bar dataKey="budgeted" name="Budget" fill="#334155" radius={[4, 4, 0, 0]} barSize={32} />
+                   <Bar dataKey="actuals" name="Actuals" fill="#4F4FF1" radius={[4, 4, 0, 0]} barSize={32}>
                       {data?.utilisations?.map((u: any, index: number) => (
                         <Cell key={index} fill={u.percUsed > 100 ? '#f43f5e' : u.percUsed > 85 ? '#f59e0b' : '#3b82f6'} />
                       ))}
