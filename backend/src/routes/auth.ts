@@ -72,14 +72,14 @@ router.post('/login', async (req: Request, res: Response) => {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: config.nodeEnv === 'production',
-      sameSite: 'lax',
+      sameSite: config.nodeEnv === 'production' ? 'none' : 'lax',
       maxAge: 15 * 60 * 1000,
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: config.nodeEnv === 'production',
-      sameSite: 'lax',
+      sameSite: config.nodeEnv === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -138,7 +138,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: config.nodeEnv === 'production',
-      sameSite: 'lax',
+      sameSite: config.nodeEnv === 'production' ? 'none' : 'lax',
       maxAge: 15 * 60 * 1000,
     });
 
@@ -150,8 +150,13 @@ router.post('/refresh', async (req: Request, res: Response) => {
 
 // Logout
 router.post('/logout', authMiddleware, async (req: AuthRequest, res: Response) => {
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
+  const cookieOptions = {
+    httpOnly: true,
+    secure: config.nodeEnv === 'production',
+    sameSite: config.nodeEnv === 'production' ? 'none' as const : 'lax' as const,
+  };
+  res.clearCookie('accessToken', cookieOptions);
+  res.clearCookie('refreshToken', cookieOptions);
 
   if (req.user) {
     await AuditLog.create({

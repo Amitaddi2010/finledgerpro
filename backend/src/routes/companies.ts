@@ -4,6 +4,7 @@ import { CompanyMembership } from '../models/CompanyMembership';
 import { authMiddleware, AuthRequest, rbac } from '../middleware/auth';
 import { signAccessToken, buildUserResponse } from '../lib/authTokens';
 import { User } from '../models/User';
+import { config } from '../config';
 
 const router = Router();
 
@@ -91,8 +92,8 @@ router.post('/:id/switch', authMiddleware, async (req: AuthRequest, res: Respons
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: config.nodeEnv === 'production',
+      sameSite: config.nodeEnv === 'production' ? 'none' : 'lax',
       maxAge: 15 * 60 * 1000,
     });
 
