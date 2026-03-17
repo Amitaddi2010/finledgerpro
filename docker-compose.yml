@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: finledger-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: finledger-api
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongodb:27017/finledger_pro
+      - JWT_SECRET=supersecretjwtkey_docker
+      - JWT_REFRESH_SECRET=supersecretrefreshkey_docker
+      - CORS_ORIGIN=http://localhost
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: ./frontend
+    container_name: finledger-web
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
