@@ -19,6 +19,7 @@ import { useAppStore } from '@/stores/appStore';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { exportToCsv } from '@/lib/csvExport';
 
 const Insights: React.FC = () => {
   const { financialYear } = useAppStore();
@@ -91,7 +92,16 @@ const Insights: React.FC = () => {
                    {refreshing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
                    Regenerate Intelligence
                  </Button>
-                 <Button variant="outline" className="bg-white/5 border-white/10 hover:bg-white/10 text-white font-bold h-11">
+                 <Button 
+                   variant="outline" 
+                   className="bg-white/5 border-white/10 hover:bg-white/10 text-white font-bold h-11"
+                   onClick={() => {
+                     if (!insightData?.insights) return;
+                     const headers = ['Type', 'Title', 'Detail', 'Action', 'Metric'];
+                     const rows = insightData.insights.map((i: any) => [i.type, i.title, i.detail, i.action, i.metric]);
+                     exportToCsv(`AI-Insights-${financialYear}.csv`, headers, rows);
+                   }}
+                 >
                     Export AI Report
                  </Button>
               </div>

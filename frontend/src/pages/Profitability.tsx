@@ -18,6 +18,7 @@ import { api } from '@/lib/api';
 import { formatINRCurrency, FY_MONTHS } from '@/lib/formatINR';
 import { Button } from '@/components/ui/button';
 import { ImportCsvPanel } from '@/components/ImportCsvPanel';
+import { exportToCsv } from '@/lib/csvExport';
 
 const Profitability: React.FC = () => {
   const { financialYear } = useAppStore();
@@ -65,8 +66,17 @@ const Profitability: React.FC = () => {
           <p className="text-muted-foreground text-sm font-medium">Detailed P&L Statement for FY {financialYear}</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2 border-dashed shadow-sm">
-            <Download className="w-4 h-4" /> Export PDF
+          <Button 
+            variant="outline" 
+            className="gap-2 border-dashed shadow-sm"
+            onClick={() => {
+              if (!plData?.months) return;
+              const headers = ['Month', 'Revenue', 'COGS', 'Gross Profit', 'Opex', 'Net Profit'];
+              const rows = plData.months.map((m: any) => [m.month, m.revenue, m.cogs, m.grossProfit, m.opex, m.netProfit]);
+              exportToCsv(`PL-Statement-${financialYear}.csv`, headers, rows);
+            }}
+          >
+            <Download className="w-4 h-4" /> Export CSV
           </Button>
           <Button className="gap-2 shadow-lg shadow-primary/20" onClick={() => setIsImportOpen(true)}>
             <Upload className="w-4 h-4" /> Import CSV

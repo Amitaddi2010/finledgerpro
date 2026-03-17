@@ -11,6 +11,7 @@ import { formatINR } from '@/lib/formatINR';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import NLQueryBar from '@/components/NLQueryBar';
+import { exportToCsv } from '@/lib/csvExport';
 
 const PivotTable: React.FC = () => {
   const { financialYear } = useAppStore();
@@ -150,7 +151,20 @@ const PivotTable: React.FC = () => {
         </div>
 
         <div className="flex items-end gap-3">
-          <Button variant="outline" className="gap-2">
+          <Button 
+            variant="outline" 
+            className="gap-2"
+            onClick={() => {
+              if (!data?.rows || !data?.columns) return;
+              const headers = [...config.rows, ...data.columns, 'Total'];
+              const rows = data.rows.map((row: any) => [
+                ...config.rows.map(dim => row[dim]),
+                ...data.columns.map((col: string) => row.data[col] || 0),
+                row.total
+              ]);
+              exportToCsv(`Pivot-Table-${financialYear}.csv`, headers, rows);
+            }}
+          >
             <Download className="w-4 h-4" /> CSV
           </Button>
           <Button onClick={fetchPivot} className="gap-2 shadow-lg shadow-primary/20">
