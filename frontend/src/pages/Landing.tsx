@@ -555,61 +555,52 @@ const Landing: React.FC = () => {
       {/* Testimonials */}
       <Testimonials />
 
-      {/* About the Founder Section */}
-      <section id="about" className="py-40 px-6 relative overflow-hidden bg-black">
-         <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-               <FadeInView>
-                  <div className="relative group">
-                     <div className="absolute -inset-4 bg-gradient-to-tr from-[#4F4FF1]/20 to-purple-500/20 rounded-[40px] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity" />
-                     <div className="relative glass border border-white/10 rounded-[40px] overflow-hidden aspect-[4/5] shadow-2xl max-w-sm mx-auto lg:ml-auto">
-                        <img 
-                           src="https://framerusercontent.com/images/LMWbuNV3D2dUB0RgvMZFUEHOnJ8.png" 
-                           alt="CA Aarushi Gupta" 
-                           className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/40 to-transparent">
-                           <div className="text-2xl font-black italic">CA Aarushi Gupta</div>
-                           <div className="text-[#4F4FF1] font-black uppercase tracking-[0.3em] text-[8px] mt-2">Founder & Visionary</div>
+      {/* The Vision Section */}
+      <section id="vision" className="py-40 px-6 relative overflow-hidden bg-black flex justify-center items-center">
+         <div className="w-full max-w-6xl mx-auto">
+            <FadeInView>
+               <div className="group relative w-full">
+                  {/* Glowing background */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-[#4F4FF1] via-purple-500 to-[#00FFFF] rounded-[40px] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000" />
+                  
+                  {/* Interactive Card */}
+                  <div className="relative glass border border-white/10 rounded-[40px] p-12 md:p-24 overflow-hidden shadow-2xl transition-transform duration-1000 group-hover:scale-[1.01] bg-black/60 relative flex flex-col items-center">
+                     
+                     {/* Background Icon */}
+                     <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity duration-1000 pointer-events-none">
+                        <Globe className="w-[600px] h-[600px] text-white" />
+                     </div>
+                     
+                     <div className="relative z-10 flex flex-col items-center text-center space-y-12">
+                        <div className="inline-block px-8 py-3 rounded-full glass border border-white/10 uppercase tracking-[0.4em] text-[#4F4FF1] text-xs font-black">
+                           The Vision
+                        </div>
+                        
+                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] italic text-white/90">
+                           Bridging the gap between <br />
+                           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4F4FF1] via-purple-500 to-[#00FFFF]">Data & Strategy.</span>
+                        </h2>
+                        
+                        <p className="max-w-4xl mx-auto text-xl md:text-3xl text-white/50 font-medium leading-relaxed italic">
+                           "Financial intelligence isn't just about reading reports—it's about foreseeing the future of your enterprise through the lens of precision and AI-driven insights."
+                        </p>
+
+                        <div className="pt-8 flex flex-col items-center justify-center gap-2">
+                           <div className="text-2xl font-black uppercase tracking-widest text-white">CA Aarushi Gupta</div>
+                           <div className="text-[#4F4FF1] font-bold uppercase tracking-[0.3em] text-xs">Founder & Visionary</div>
+                        </div>
+
+                        <div className="pt-12 flex flex-wrap justify-center gap-4 max-w-4xl">
+                           {['Data Integrity', 'Strategic Foresight', 'AI Governance', 'Financial Precision', 'Scale Velocity'].map((tag) => (
+                              <span key={tag} className="px-6 py-3 glass border border-white/10 rounded-full text-xs font-black uppercase tracking-widest text-white/40 hover:text-white hover:border-[#4F4FF1]/50 hover:bg-[#4F4FF1]/10 hover:shadow-[0_0_30px_rgba(79,79,241,0.2)] transition-all cursor-default">
+                                 {tag}
+                              </span>
+                           ))}
                         </div>
                      </div>
                   </div>
-               </FadeInView>
-
-               <div className="space-y-12">
-                  <FadeInView delay={0.2}>
-                     <span className="text-xs font-black uppercase tracking-[0.4em] text-[#4F4FF1] mb-8 block">The Vision</span>
-                     <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-[0.9] italic mb-10">
-                        Bridging the gap between <br />
-                        <span className="text-white/20">Data & Strategy.</span>
-                     </h2>
-                     <p className="text-lg md:text-xl text-white/40 font-medium leading-relaxed">
-                        "Financial intelligence isn't just about reading reports—it's about foreseeing the future of your enterprise through the lens of precision and AI-driven insights."
-                     </p>
-                  </FadeInView>
-
-                  <FadeInView delay={0.4}>
-                     <div className="flex flex-wrap gap-4">
-                        {['Data Integrity', 'Strategic Foresight', 'AI Governance', 'Financial Precision', 'Scale Velocity'].map((tag) => (
-                           <span key={tag} className="px-6 py-3 glass border border-white/10 rounded-full text-xs font-black uppercase tracking-widest text-white/60 hover:text-[#4F4FF1] hover:border-[#4F4FF1]/30 transition-all cursor-default">
-                              {tag}
-                           </span>
-                        ))}
-                     </div>
-                  </FadeInView>
-
-                  <FadeInView delay={0.6}>
-                     <div className="glass-card p-10 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-4">
-                           <Sparkles className="w-8 h-8 text-[#4F4FF1]/20" />
-                        </div>
-                        <p className="text-lg text-white/60 italic leading-relaxed relative z-10">
-                           "Our philosophy is simple: empower every decision-maker with the clarity of a Chartered Accountant, powered by neural intelligence."
-                        </p>
-                     </div>
-                  </FadeInView>
                </div>
-            </div>
+            </FadeInView>
          </div>
       </section>
 
