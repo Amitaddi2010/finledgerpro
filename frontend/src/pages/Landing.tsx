@@ -113,26 +113,7 @@ const FadeInView = ({ children, delay = 0 }: { children: React.ReactNode, delay?
   </motion.div>
 );
 
-const FeatureCard = ({ icon: Icon, title, desc, image, className, delay }: any) => (
-  <FadeInView delay={delay}>
-    <div className={cn("glass-card group overflow-hidden flex flex-col h-full", className)}>
-      <div className="p-10">
-        {Icon && (
-          <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-6 group-hover:bg-[#4F4FF1]/10 transition-colors">
-            <Icon className="w-6 h-6 text-white group-hover:text-[#4F4FF1] transition-colors" />
-          </div>
-        )}
-        <h3 className="text-xl font-bold mb-4">{title}</h3>
-        <p className="text-white/40 leading-relaxed text-base">{desc}</p>
-      </div>
-      {image && (
-        <div className="mt-auto px-10 pb-0 overflow-hidden max-w-[90%] mx-auto">
-          <img src={image} alt={title} className="w-full h-auto object-contain translate-y-4 group-hover:translate-y-0 transition-transform duration-700" />
-        </div>
-      )}
-    </div>
-  </FadeInView>
-);
+
 
 const ProcessStep = ({ number, title, desc, delay }: any) => (
   <FadeInView delay={delay}>

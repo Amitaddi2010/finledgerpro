@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Upload, CheckCircle2, AlertTriangle, Download, X, Trash2, Sparkles, Loader2 } from 'lucide-react';
+import { Upload, CheckCircle2, AlertTriangle, Download, X, Trash2, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useAppStore } from '@/stores/appStore';
 import { Button } from '@/components/ui/button';
