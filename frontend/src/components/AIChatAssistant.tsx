@@ -12,7 +12,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/authStore';
 import { useAppStore } from '@/stores/appStore';
-import { api } from '@/lib/api';
+import { api, configuredBaseURL } from '@/lib/api';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -47,7 +47,7 @@ const AIChatAssistant: React.FC = () => {
 
     try {
       const doChat = async () => {
-        return fetch('/api/v1/ai/chat', {
+        return fetch(`${configuredBaseURL}/ai/chat`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
